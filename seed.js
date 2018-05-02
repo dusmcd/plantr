@@ -4,19 +4,19 @@ const PlotVegetable = db.model('veg_plot');
 db
   .sync({ force: true })
   .then(() => {
-    makePromise()
-      .then(values => {
-        return PlotVegetable.create({
-          vegetableId: values[0].id,
-          plotId: values[1].id,
-        });
-      })
-      .then(() => {
-        db.close();
-      });
+    return makePromise();
+  })
+  .then(values => {
+    return PlotVegetable.create({
+      vegetableId: values[0].id,
+      plotId: values[1].id,
+    });
+  })
+  .then(() => {
+    db.close();
   })
   .catch(err => {
-    console.error(err.message);
+    console.error('thrown in global scope', err.stack);
     db.close();
   });
 
@@ -40,6 +40,9 @@ function makePromise() {
         shaded: true,
         gardenerId: gardener.id,
       });
+    })
+    .catch(err => {
+      console.error('thrown in makePromise function', err.stack);
     });
 
   return Promise.all([vegetableP, plotP]);
